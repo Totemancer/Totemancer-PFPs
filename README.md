@@ -1,5 +1,7 @@
 # Totemancer PFP/Avatar Collection
 
+![Totemancer: PFPs](https://totemancer.com/images/other/pfp_image.png "Totemancer: PFPs")
+
 Chain: TON
 
 ## Summary
@@ -8,7 +10,7 @@ Chain: TON
 - Numbers: buyers can choose any available number from #11 to #10000 during marketplace purchase. Auction is used from #1 to #10.
 - Claims: Juiceboard participants can claim free or discounted random PFPs for a limited time (30 days) via a Relayer.
 - Fairness: claim numbers are assigned by a deterministic and auditable algorithm using a public transaction hash.
-- Upgrade: traits and rarity are not revealed by a global drop. Holders trigger a manual Upgrade in the Mini App, which sends a small on-chain transaction. The transaction hash seeds a public algorithm that deterministically assigns traits and rarity. Neither the user nor the team knows the outcome before the upgrade tx is finalized.
+- Reveal: traits and rarity are not revealed by a global drop. Holders trigger a manual reveal in the Mini App, which sends a small on-chain transaction. The transaction hash seeds a public algorithm that deterministically assigns traits and rarity. Neither the user nor the team knows the outcome before the reveal tx is finalized.
 
 ## Supply and numbering
 
@@ -53,6 +55,8 @@ Claims use a public, reproducible mapping. Claimants do not pick numbers.
 
 Inputs
 - tx_hash: Transaction hash of the claimant's qualifying payment. This value is public on TON and immutable. Use the 64-character hex string as shown by explorers, case insensitive.
+
+![How to find your claim tx hash in Tonviewer](https://totemancer.com/images/other/pfp_tx_hash.png "Click 'B', open internal message, copy Tx hash")
 
 Domain
 - Valid numbers for assignment: 11..10000 inclusive.
@@ -116,32 +120,32 @@ fmt.Println("Number: #", n)
 Notes
 - Verify locally using the code above. Call AssignNumber(txHashHex, func(int) bool { return false }) and compare the result.
 
-## Traits and Upgrade (user initiated)
+## Traits and Reveal (user initiated)
 
 Overview
-- There is no global reveal. Traits and rarity are assigned only when the holder triggers Upgrade in the Mini App.
+- There is no global reveal. Traits and rarity are assigned only when the holder triggers reveal in the Mini App.
 - The Mini App prompts a small on-chain tx (example 0.01 TON). Fees are non-refundable.
-- The tx hash from this Upgrade is used as the seed input to a public, deterministic algorithm that assigns traits and rarity.
+- The tx hash from this reveal is used as the seed input to a public, deterministic algorithm that assigns traits and rarity.
 
 Inputs
-- upgrade_tx_hash: transaction hash of the holder's Upgrade transaction sent from their wallet. Use the 64-character hex string as shown by explorers, case insensitive.
+- reveal_tx_hash: transaction hash of the holder's reveal transaction sent from their wallet. Use the 64-character hex string as shown by explorers, case insensitive.
 
 Procedure
-1. At least 7 days before enabling Upgrade, we publish the exact code that defines:
+1. At least 7 days before enabling reveal, we publish the exact code that defines:
    - trait catalogs and weights
    - PRNG choice and seeding scheme
-   - mapping from token number to trait rolls given upgrade_tx_hash
-2. After the public announcement, Upgrade becomes available in the Mini App.
-3. When a holder taps Upgrade and the tx is finalized on chain, the published algorithm computes traits and rarity from upgrade_tx_hash.
+   - mapping from token number to trait rolls given reveal_tx_hash
+2. After the public announcement, Reveal becomes available in the Mini App.
+3. When a holder taps Reveal and the tx is finalized on chain, the published algorithm computes traits and rarity from reveal_tx_hash.
 4. The resulting traits are written to metadata and become visible on marketplaces and in app.
 
 Determinism and fairness
 - The algorithm and weights are published in advance for audit.
-- The per-token seed is the holder's own upgrade_tx_hash, which is public and not under team control.
+- The per-token seed is the holder's own reveal_tx_hash, which is public and not under team control.
 - Neither the holder nor the team can know the exact outcome before the tx is finalized, since the final tx hash is not known until inclusion.
 
 Verification
-- Anyone can recompute traits for a given token by running the published code with the observed upgrade_tx_hash and token number.
+- Anyone can recompute traits for a given token by running the published code with the observed reveal_tx_hash and token number.
 
 ## Auctions for #1..#10
 
@@ -165,24 +169,25 @@ Steps
 3. Run the reference code using your tx_hash and an is_taken implementation bound to that sale state.
 4. Confirm that the resulting number matches what you received.
 
-You can also verify a trait assignment after Upgrade by running the published trait algorithm with your upgrade_tx_hash and token number.
+You can also verify a trait assignment after Reveal by running the published trait algorithm with your reveal_tx_hash and token number.
 
 We will ship
 - CLI: pfp-verify
 
 ## Contracts and addresses
 
-- Collection address: TBA
-- Relayer address: TBA
+- Collection address:  
+  [`EQB8ZmKPjL_sh3n4V6gj1oQNHqlW9M-Q58AiEA2nXBYxaw1G`](https://tonviewer.com/EQB8ZmKPjL_sh3n4V6gj1oQNHqlW9M-Q58AiEA2nXBYxaw1G)
 
-All exact addresses and hashes will be pinned here before the sale goes live.
+- Relayer address:  
+  [`EQDe-5m9tn63eUcgTIyGlJTbPJM5EwKoJ2DkjMpRQD24IsMM`](https://tonviewer.com/EQDe-5m9tn63eUcgTIyGlJTbPJM5EwKoJ2DkjMpRQD24IsMM)
 
 ## Security notes
 
 - Deterministic randomness is for transparency, not secrecy. Everyone can recompute the same result.
-- Claim number assignment uses a public tx hash from the claim payment. Trait assignment uses a public tx hash from the holder's Upgrade.
+- Claim number assignment uses a public tx hash from the claim payment. Trait assignment uses a public tx hash from the holder's reveal.
 - The Relayer never holds user private keys and only holds NFTs transiently during transfer.
-- Upgrade fees are non-refundable because they are network fees.
+- Reveal fees are non-refundable because they are network fees.
 
 ## FAQ
 
@@ -193,10 +198,10 @@ Q: Can I choose a number during a marketplace purchase
 A: Yes. Any available number from #11..#10000.
 
 Q: When do my traits appear  
-A: Only after you trigger Upgrade in the Mini App and the upgrade transaction is finalized.
+A: Only after you trigger Reveal in the Mini App and the reveal transaction is finalized.
 
-Q: Can I postpone Upgrade  
-A: Yes. You can hold an unrevealed token and upgrade later. Traits are not assigned until you upgrade.
+Q: Can I postpone Reveal  
+A: Yes. You can hold an unrevealed token and reveal later. Traits are not assigned until you reveal.
 
 Q: What happens if my assigned number is bought at the same time  
 A: The assignment increments to the next available number with wrap. This rule is deterministic.
@@ -205,8 +210,9 @@ Q: Why use transaction hashes for randomness
 A: They are public, immutable, and not under team control. They provide fair seeds for deterministic assignment.
 
 Q: Is the trait assignment fair  
-A: Yes. The code is published in advance and the per-token seed is your own upgrade_tx_hash. Anyone can reproduce the exact mapping.
+A: Yes. The code is published in advance and the per-token seed is your own reveal_tx_hash. Anyone can reproduce the exact mapping.
 
 ## Changelog
 
+- 2025-11-14: added contract addresses and tx_hash lookup demonstration
 - 2025-11-03: initial draft
