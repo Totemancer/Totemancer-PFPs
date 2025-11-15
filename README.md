@@ -33,8 +33,10 @@ Anyone can directly purchase any available number from #11..#10000 from on-chain
 Eligibility
 - Have at least 1 JP collected before the claim snapshot time.
 
-Claim window
-- 30 days. Exact start and end timestamps will be posted in this repository. After the window closes, only marketplace purchases remain.
+Claim window  
+- 30 days. After the window closes, only marketplace purchases remain.  
+- Expected 17 November 2025: items start listing on Getgems in batches. Listing is not instant; packs appear gradually. You can favorite your preferred number(s) on [Getgems](http://getgems.io/totemancer-pfps) to get notified when that exact pack goes live.  
+- Expected Free/Discounted claim activation: between 17 and 19 November 2025. Follow announcements on [Telegram](https://t.me/Totemancers) and check the 'PFP Claim' section in the Mini App for live updates.
 
 Relayer flow
 - Totemancer Relayer buys from the marketplace and transfers to eligible users.
@@ -214,5 +216,6 @@ A: Yes. The code is published in advance and the per-token seed is your own reve
 
 ## Changelog
 
+- 2025-11-15: added claim window details
 - 2025-11-14: added contract addresses and tx_hash lookup demonstration
 - 2025-11-03: initial draft
